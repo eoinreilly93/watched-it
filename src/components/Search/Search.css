@@ -1,4 +1,4 @@
-
+/* Display days component*/
 .days-div {
     display: flex;
     flex-direction: row;
@@ -32,6 +32,7 @@
     font-weight: normal;
 }
 
+/* Search */
 .search-fields-div {
     display: flex;
     justify-content: center;
@@ -52,4 +53,26 @@
     color: white;
 }
 
+.search-suggestions-div {
+    margin-top: 20px;
+    min-height: 100px;
+    max-height: 300px;
+    display: flex;
+    justify-content: center;
+    overflow: auto;
+  }
+
+  .suggestion-list {
+    width: 100%;
+    margin: 0px 25%;
+    text-align: left;
+  }
+  
+  .suggest-item {
+    border: 0px !important;
+    cursor: pointer;
+    color: white;
+    font-size: 24px;
+    width: 100%;
+  }
 

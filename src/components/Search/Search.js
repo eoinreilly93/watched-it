@@ -3,14 +3,16 @@ import "./Search.css";
 import { List, Input, Select } from "antd";
 import Axios from "axios";
 import Title from "antd/lib/typography/Title";
-import { async } from "q";
+import { isEmpty } from "lodash";
+
 
 class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
             searchText: "",
-            suggestions: []
+            suggestions: [],
+            selectedShow: {}
         }
     }
 
@@ -22,6 +24,7 @@ class Search extends Component {
           <div>
             {this.calculatedDays()}
             {this.searchBar()}
+            {this.searchSuggestions()}
           </div>
         );
       }
@@ -65,7 +68,7 @@ class Search extends Component {
       }
 
       /**
-       * Asynchronously request data from TheMovieDB api
+       * @description Asynchronously request data from TheMovieDB api
        * @author eoin.reilly
        */
       handleSearchText = (e) => {
@@ -95,8 +98,72 @@ class Search extends Component {
             .finally(function() {});
         }
       }
+
+      searchSuggestions = () => {
+        return (
+          <div className="search-suggestions-div">
+            {this.state.suggestions.length > 0 && (
+              <List
+                itemLayout="vertical"
+                dataSource={this.state.suggestions}
+                className="suggestion-list"
+                renderItem={item => ( //renderItem uses objects from the dataSource
+                  <List.Item
+                    className="suggest-item"
+                    onClick={() => this.getShowData(item.id, item.title)}
+                  >
+                    {item.title}
+                  </List.Item>
+                )}
+              />
+            )}
+          </div>
+        );
+      }
+
+      /**
+       * @author eoin.reilly
+       * @description Gets the data for the selected show
+       * @param {*} id 
+       * @param {*} name 
+       * @returns {Object} which returns detail of tv show then getting id,name,image,number of episodes.
+       */
+      getShowData = (id, name) => {
+        this.setState({
+          searchText: name,
+          suggestions: []
+        });
+        const apiPath = `https://api.themoviedb.org/3/tv/${id}?api_key=de810845bc016371c4822a8a9550270d&language=en-US`;
+        Axios
+          .get(apiPath)
+          .then(response => {
+            this.setState({
+              selectedShow: {
+                id: response.data.id,
+                name: response.data.name,
+                numberOfSeasons: response.data.number_of_seasons,
+                poster:
+                  "https://image.tmdb.org/t/p/w780/" + response.data.poster_path,
+                backdrop:
+                  "https://image.tmdb.org/t/p/w780/" + response.data.backdrop_path,
+                runtime: !isEmpty(response.data.episode_run_time)
+                  ? response.data.episode_run_time
+                  : [0],
+                season: response.data.seasons.map(season => {
+                  return {
+                    seasonNumber: season.season_number,
+                    numberOfEpisodes: season.episode_count
+                  };
+                })
+              }
+            });
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      }
       
-    render() {
+      render() {
         return (
           <div>
               {this.searchTv()}
