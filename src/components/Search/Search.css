@@ -1,3 +1,4 @@
+
 .days-div {
     display: flex;
     flex-direction: row;
@@ -30,3 +31,25 @@
     color: gray;
     font-weight: normal;
 }
+
+.search-fields-div {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0px 20px 0px;
+}
+
+.search-input {
+    width: 50% !important;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 2em;
+    color: white !important;
+}
+ 
+.transparent-fields {
+    background: transparent !important;
+    border: 0px !important;
+    color: white;
+}
+
+
