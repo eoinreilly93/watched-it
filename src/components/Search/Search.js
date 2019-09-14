@@ -85,9 +85,9 @@ class Search extends Component {
                   <Button
                     type="default"
                     shape="circle"
-                    icon="search"
+                    icon="right"
                     size="large"
-                    className="search-button"
+                    style={{marginLeft: 10 + 'px'}} //Could not style in the css file
                     onClick={() => this.search()}
                   />
                 </>
@@ -211,7 +211,8 @@ class Search extends Component {
       }
 
       search() {
-
+        let shows = this.state.showsData;
+        let showTime = this.state.totalTime;
       }
       
       render() {
