@@ -74,17 +74,17 @@ class Search extends Component {
                     icon="right"
                     size="large"
                     style={{marginLeft: 10 + 'px'}} //Could not style in the css file
-                    onClick={() => this.search()}
+                    onClick={() => this.calculateWatchTime()}
                   />
                 </>
               ) : (
                 <Button
                   type="default"
                   shape="circle"
-                  icon="search"
+                  icon="right"
                   size="large"
-                  className="search-button"
-                  onClick={() => this.search()}
+                  style={{marginLeft: 10 + 'px'}} //Could not style in the css file
+                  onClick={() => this.calculateWatchTime()}
                 />
               )
             ) : (
@@ -178,27 +178,32 @@ class Search extends Component {
                 runtime: !isEmpty(response.data.episode_run_time)
                   ? response.data.episode_run_time
                   : [0],
-                season: response.data.seasons.map(season => {
-                  return {
-                    seasonNumber: season.season_number,
-                    numberOfEpisodes: season.episode_count
-                  };
+                seasons: response.data.seasons
+                  .filter(season => season.season_number != 0) //Some seasons have a season 0, if this exists, remove it
+                  .map(season => {
+                    return {
+                      seasonNumber: season.season_number,
+                      numberOfEpisodes: season.episode_count
+                    };
                 })
               }
             });
           })
           .catch(function(error) {
             console.log(error);
-          });
+          });         
       }
 
       selectSeason = (value) => {
         this.setState({ selectedSeason: value });
       }
 
-      search() {
-        let shows = this.state.showsData;
-        let showTime = this.state.totalTime;
+      /**
+       * Calculate the total nubmer of days, hours and minutes spent watching
+       * the selected tv show 
+       */
+      calculateWatchTime() {
+
       }
       
       render() {
