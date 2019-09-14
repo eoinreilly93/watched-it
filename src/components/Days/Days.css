@@ -1,0 +1,32 @@
+.days-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    min-height: 100px;
+    color: white;
+    margin: 40px;
+}
+  
+.colon-span {
+    margin-top: 30px;
+    font-size: 3em;
+}
+
+.days {
+    padding: 10px;
+    text-align: center;
+}
+
+.numbers {
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    font-size: 5em;
+    font-weight: 100;
+    display: block;
+    margin-bottom: -21.33px;
+}
+
+.day-words {
+    font-size: 12px;
+    color: gray;
+    font-weight: normal;
+}
