@@ -60,19 +60,32 @@
     display: flex;
     justify-content: center;
     overflow: auto;
-  }
+}
 
-  .suggestion-list {
+.suggestion-list {
     width: 100%;
     margin: 0px 25%;
     text-align: left;
-  }
-  
-  .suggest-item {
+}
+
+.suggest-item {
     border: 0px !important;
     cursor: pointer;
     color: white;
     font-size: 24px;
     width: 100%;
+}
+
+/* Remove this  */
+.suggest-item:hover {
+    color: yellow;
+}
+
+.search-button {
+    margin-left: 10px;
+  }
+  
+  .search-button > i {
+    font-size: 25px;
   }
 

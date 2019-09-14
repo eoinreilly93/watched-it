@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./Search.css";
-import { List, Input, Select } from "antd";
+import { List, Input, Select, Button } from "antd";
 import Axios from "axios";
 import { isEmpty } from "lodash";
 
@@ -11,7 +11,8 @@ class Search extends Component {
         this.state = {
             searchText: "",
             suggestions: [],
-            selectedShow: {}
+            selectedShow: {},
+            selectedSeason: null
         }
     }
 
@@ -62,6 +63,47 @@ class Search extends Component {
               value={this.state.searchText}
               onChange={e => this.handleSearchText(e)}
             />
+            {/* Display the drop down and button only when
+                the user has selected a show */}
+            {!isEmpty(this.state.selectedShow) ? (
+              this.state.selectedShow.numberOfSeasons > 0 ? (
+                <>
+                  <Select
+                    defaultValue={this.state.selectedShow.numberOfSeasons}
+                    size="large"
+                    onChange={this.selectSeason}
+                  >
+                    {[...Array(this.state.selectedShow.numberOfSeasons).keys()].map(
+                      val => (
+                        <Select.Option key={val} value={val + 1}>
+                          {val + 1}
+                        </Select.Option>
+                      )
+                    )}
+
+                  </Select>
+                  <Button
+                    type="default"
+                    shape="circle"
+                    icon="search"
+                    size="large"
+                    className="search-button"
+                    onClick={() => this.search()}
+                  />
+                </>
+              ) : (
+                <Button
+                  type="default"
+                  shape="circle"
+                  icon="search"
+                  size="large"
+                  className="search-button"
+                  onClick={() => this.search()}
+                />
+              )
+            ) : (
+              ""
+            )}
           </div>
         );
       }
@@ -95,6 +137,8 @@ class Search extends Component {
               //TODO: Error handling
             })
             .finally(function() {});
+        } else {
+          this.setState({ suggestions: [], selectedShow: {} })
         }
       }
 
@@ -160,6 +204,14 @@ class Search extends Component {
           .catch(function(error) {
             console.log(error);
           });
+      }
+
+      selectSeason = (value) => {
+        this.setState({ selectedSeason: value });
+      }
+
+      search() {
+
       }
       
       render() {
