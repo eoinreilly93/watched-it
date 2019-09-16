@@ -246,9 +246,9 @@ class Search extends Component {
           totalShowWatchTime: totalShowWatchTime
         };
 
-        shows.push(this.state.selectedShow);
+        shows.unshift(this.state.selectedShow); //unshift inserts object at start of the array
         localStorage.setItem("showsData", JSON.stringify(shows));
-        totalShowsTime.push(show);
+        totalShowsTime.unshift(show);
         localStorage.setItem("totalShowsTime", JSON.stringify(totalShowsTime));
         this.setState({
           showsData: shows,
@@ -284,8 +284,19 @@ class Search extends Component {
         );
       }
 
-      removeItem = (item) => {
-        
+      /**
+       * @author Eoin
+       * @desc Removes selected shows from local state and as well from local storage.
+       */
+      removeItem = (index) => {
+        /* val = the current element, i = current index (starts at 0)
+         * If you remove val, i becomes the current element, so the filter will not work
+         */
+        let shows = this.state.showsData.filter((val, i) => i !== index);
+        localStorage.setItem("showsData", JSON.stringify(shows));
+        let totalShowsTime = this.state.totalTime.filter((val, i) => i !== index);
+        localStorage.setItem("totalShowsTime", JSON.stringify(totalShowsTime));
+        this.setState({ showsData: shows, totalTime: totalShowsTime });
       }
       
       render() {
