@@ -4,6 +4,8 @@ import { List, Input, Select, Button } from "antd";
 import Axios from "axios";
 import { isEmpty } from "lodash";
 import Days from "../Days/Days";
+import { Result } from "../Result/Result";
+
 
 
 class Search extends Component {
@@ -13,7 +15,15 @@ class Search extends Component {
             searchText: "",
             suggestions: [],
             selectedShow: {},
-            selectedSeason: null
+            selectedSeason: null,
+            showsData:
+              localStorage.getItem("showsData") !== null
+                ? JSON.parse(localStorage.getItem("showsData"))
+                : [],
+            totalTime:
+              localStorage.getItem("totalShowsTime") !== null
+                ? JSON.parse(localStorage.getItem("totalShowsTime"))
+                : []
         }
     }
 
@@ -26,6 +36,7 @@ class Search extends Component {
             {this.calculatedDays()}
             {this.searchBar()}
             {this.searchSuggestions()}
+            {this.searchResults()}
           </div>
         );
       }
@@ -171,6 +182,7 @@ class Search extends Component {
                 id: response.data.id,
                 name: response.data.name,
                 numberOfSeasons: response.data.number_of_seasons,
+                selectedSeason: response.data.number_of_seasons, //Default selected season is the total number of seasons. This can be overriden in selectSeason()
                 poster:
                   "https://image.tmdb.org/t/p/w780/" + response.data.poster_path,
                 backdrop:
@@ -179,7 +191,7 @@ class Search extends Component {
                   ? response.data.episode_run_time
                   : [0],
                 seasons: response.data.seasons
-                  .filter(season => season.season_number != 0) //Some seasons have a season 0, if this exists, remove it
+                  .filter(season => season.season_number !== 0) //Some seasons have a season 0, if this exists, remove it
                   .map(season => {
                     return {
                       seasonNumber: season.season_number,
@@ -194,8 +206,15 @@ class Search extends Component {
           });         
       }
 
+      //Add selected season to the selectedShow state object as well as to the state
       selectSeason = (value) => {
-        this.setState({ selectedSeason: value });
+        this.setState({ 
+          selectedSeason: value,
+          selectedShow: { 
+            ...this.state.selectedShow, //Passes current object so it retains all existing properties
+            selectedSeason : value
+          }
+        });
       }
 
       /**
@@ -203,7 +222,70 @@ class Search extends Component {
        * the selected tv show 
        */
       calculateWatchTime() {
+        let shows = this.state.showsData; // All the data on all shows currently calculated
+        let totalShowsTime = this.state.totalTime; // Current total watch time
+        let totalEpisodes = 0;
 
+        if(this.state.selectedSeason === null) {
+          this.state.selectedShow.seasons.map( 
+            result => (totalEpisodes += result.numberOfEpisodes)
+          );
+        } else {
+          this.state.selectedShow.seasons.map((result, i) => {
+            if (i < this.state.selectedSeason) {
+              totalEpisodes += result.numberOfEpisodes;
+            }
+          });
+        }
+
+        //Calculate the total watchtime for the selected show and seasons
+        const totalShowWatchTime = (this.state.selectedShow.runtime.reduce((totalRuntime, singleRuntime) => totalRuntime + singleRuntime))/this.state.selectedShow.runtime.length;
+        const show = {
+          id: this.state.selectedShow.id,
+          name: this.state.selectedShow.name,
+          totalShowWatchTime: totalShowWatchTime
+        };
+
+        shows.push(this.state.selectedShow);
+        localStorage.setItem("showsData", JSON.stringify(shows));
+        totalShowsTime.push(show);
+        localStorage.setItem("totalShowsTime", JSON.stringify(totalShowsTime));
+        this.setState({
+          showsData: shows,
+          totalTime: totalShowsTime,
+          searchText: "",
+          selectedShow: {},
+          selectedSeason: null
+        });
+      }
+
+      searchResults() {
+        return (
+          <div className="search-results-div">
+            {this.state.showsData.length > 0 && (
+              <List
+                itemLayout="horizontal"
+                className="search-results-list"
+                grid={{ xxl: 6, xl: 5, lg: 4, md: 2, sm: 2, xs: 1 }}
+                dataSource={this.state.showsData}
+                renderItem={(item, i) => (
+                  <List.Item className="search-results-item">
+                    <Result
+                      src={item.poster}
+                      seasonsNumber={item.selectedSeason} //Fix incorrect season value
+                      title={item.name}
+                      removeItem={() => this.removeItem(i)}
+                    />
+                  </List.Item>
+                )}
+              />
+            )}
+          </div>
+        );
+      }
+
+      removeItem = (item) => {
+        
       }
       
       render() {

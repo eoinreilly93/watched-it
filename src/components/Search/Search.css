@@ -47,4 +47,19 @@
     color: yellow;
 }
 
+.search-results-div {
+    margin: 0.5em 0px;
+    z-index: 10000;
+}
+
+.search-results-list {
+    padding: 0px 40px;
+}
+
+.search-results-item {
+    margin-bottom: 0px !important;
+}
+
+  
+
 
