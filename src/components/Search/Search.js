@@ -43,7 +43,9 @@ class Search extends Component {
 
       calculatedDays() {
         return (
-            <Days />
+            <Days 
+              calculatedTime={this.formatCalculatedTime()}
+            />
         );
       }
 
@@ -236,10 +238,11 @@ class Search extends Component {
               totalEpisodes += result.numberOfEpisodes;
             }
           });
-        }
+        } 
 
         //Calculate the total watchtime for the selected show and seasons
-        const totalShowWatchTime = (this.state.selectedShow.runtime.reduce((totalRuntime, singleRuntime) => totalRuntime + singleRuntime))/this.state.selectedShow.runtime.length;
+        //Reduce function reduces an array to a single value (in this case it sums all values)
+        const totalShowWatchTime = totalEpisodes * ((this.state.selectedShow.runtime.reduce((totalRuntime, currentRuntime) => totalRuntime + currentRuntime))/this.state.selectedShow.runtime.length);
         const show = {
           id: this.state.selectedShow.id,
           name: this.state.selectedShow.name,
@@ -297,6 +300,30 @@ class Search extends Component {
         let totalShowsTime = this.state.totalTime.filter((val, i) => i !== index);
         localStorage.setItem("totalShowsTime", JSON.stringify(totalShowsTime));
         this.setState({ showsData: shows, totalTime: totalShowsTime });
+      }
+
+      formatCalculatedTime = () => {
+        if (!isEmpty(this.state.totalTime)) {
+          let totalTime = 0;
+          this.state.totalTime.map(time => (totalTime += time.totalShowWatchTime));
+          var sec_num = totalTime * 60;
+          var days = Math.floor(sec_num / (3600 * 24));
+          var hours = Math.floor((sec_num - days * (3600 * 24)) / 3600);
+          var minutes = Math.floor(
+            (sec_num - days * (3600 * 24) - hours * 3600) / 60
+          );
+          if (hours < 10) {
+            hours = "0" + hours;
+          }
+          if (minutes < 10) {
+            minutes = "0" + minutes;
+          }
+
+          return { days: days, hours: hours, minutes: minutes };
+        }
+        else {
+          return {};
+        }
       }
       
       render() {

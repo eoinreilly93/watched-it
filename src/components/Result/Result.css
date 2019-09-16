@@ -4,7 +4,7 @@
     background: black
   }
   
-  .result-div:hover>.result-cancel {
+  .result-div:hover > .result-cancel {
     display: flex;
   }
   
@@ -24,6 +24,7 @@
   }
   
   
+  /* Display show name and season number chosen */
   .result-info {
     position: absolute;
     bottom: 10px;

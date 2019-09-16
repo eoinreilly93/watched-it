@@ -58,6 +58,7 @@
 
 .search-results-item {
     margin-bottom: 0px !important;
+    /* padding: 1px; Adds padding between results */
 }
 
   
