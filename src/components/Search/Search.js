@@ -330,6 +330,16 @@ class Search extends Component {
         return (
           <div>
               {this.searchTv()}
+              <span
+                style={{
+                  backgroundImage: !isEmpty(this.state.selectedShow)
+                    ? `url(${this.state.selectedShow.backdrop})`
+                    : !isEmpty(this.state.showsData)
+                    ? `url(${this.state.showsData[0].backdrop})`
+                    : ``
+                }}
+                className="bg"
+              />
           </div>
         );
       }
