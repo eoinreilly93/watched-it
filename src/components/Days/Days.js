@@ -10,7 +10,7 @@ export const Days = props => {
                 <>
                 <div className="days">
                     <div className="numbers">{props.calculatedTime.days}</div>
-                    <div className="day-words">Days</div>
+                    <div className="day-words">DAYS</div>
                 </div>
                 <span className="colon-span">:</span>
                 <div className="days">
