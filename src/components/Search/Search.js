@@ -12,6 +12,7 @@ class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            displayList: false,
             searchText: "",
             suggestions: [],
             selectedShow: {},
@@ -26,6 +27,15 @@ class Search extends Component {
                 : []
         }
     }
+
+    /**
+     * Function for displaying and hidding the search suggestions list
+     */
+    toggleList = () => {
+      this.setState({
+        displayList: !this.state.displayList
+      });
+    };
 
     /**
      * Div that returns the page structure jsx
@@ -54,9 +64,11 @@ class Search extends Component {
        */
       searchBar() {
         return (
-          <div className="search-fields-div">
+          <div className="search-fields-div" >
             <Input
-              placeholder="Type in a Tv show"
+              onFocus={() => this.toggleList()}
+              onBlur={() => this.toggleList()}
+              placeholder="Type in a Tv Show"
               size="large"
               className="search-input transparent-fields"
               value={this.state.searchText}
@@ -142,17 +154,22 @@ class Search extends Component {
       }
 
       searchSuggestions = () => {
+        const displayList = this.state;
         return (
           <div className="search-suggestions-div">
-            {this.state.suggestions.length > 0 && (
+            {this.state.suggestions.length > 0 && displayList && (
               <List
-                itemLayout="vertical"
+                itemLayout='vertical'
                 dataSource={this.state.suggestions}
-                className="suggestion-list"
-                renderItem={item => ( //renderItem uses objects from the dataSource
+                className='suggestion-list'
+                renderItem={(
+                  item 
+                ) => (
                   <List.Item
-                    className="suggest-item"
-                    onClick={() => this.getShowData(item.id, item.title)}
+                    className='suggest-item'
+                    onClick={() => {
+                      this.getShowData(item.id, item.title);
+                    }}
                   >
                     {item.title}
                   </List.Item>
@@ -269,7 +286,7 @@ class Search extends Component {
               <List
                 itemLayout="horizontal"
                 className="search-results-list"
-                grid={{ xxl: 6, xl: 5, lg: 4, md: 2, sm: 2, xs: 1 }}
+                grid={{ xxl: 6, xl: 5, lg: 4, md: 3, sm: 2, xs: 1 }}
                 dataSource={this.state.showsData}
                 renderItem={(item, i) => (
                   <List.Item className="search-results-item">
