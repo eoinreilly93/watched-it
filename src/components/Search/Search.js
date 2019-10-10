@@ -89,7 +89,7 @@ class Search extends Component {
               dropdownStyle={{ background: 'transparent' }}
               onChange={this.handleSearchText}
               onSelect={(value, option) => this.getShowData(value, option)}
-              placeholder='Type in a Tv show'
+              placeholder='Type in a tv show'
               style={{ width: 800, marginRight: '0.5em' }}
               value={this.state.searchText}
               className='auto-complete'
