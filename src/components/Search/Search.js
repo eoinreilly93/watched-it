@@ -90,7 +90,7 @@ class Search extends Component {
               onChange={this.handleSearchText}
               onSelect={(value, option) => this.getShowData(value, option)}
               placeholder='Type in a Tv show'
-              style={{ width: 800 }}
+              style={{ width: 800, marginRight: '0.5em' }}
               value={this.state.searchText}
               className='auto-complete'
             >
@@ -113,6 +113,7 @@ class Search extends Component {
                 <>
                   <Select
                     className='number-of-seasons'
+                    style={{ width: 60 }}
                     defaultValue={this.state.selectedShow.numberOfSeasons}
                     size='large'
                     onChange={this.selectSeason}
