@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import "./Search.css";
-import { List, Input, Select, Button } from "antd";
+import { List, AutoComplete, Select, Button } from "antd";
 import Axios from "axios";
 import { isEmpty } from "lodash";
 import Days from "../Days/Days";
 import { Result } from "../Result/Result";
 
-
+const { Option } = AutoComplete;
 
 class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            displayList: false,
+            focus: false,
             searchText: "",
             suggestions: [],
             selectedShow: {},
@@ -28,12 +28,21 @@ class Search extends Component {
         }
     }
 
+    componentDidMount() {
+      this.nameInput.focus();
+      window.onblur = () => {
+        this.setState({
+          suggestions: []
+        });
+      };
+    }
+
     /**
-     * Function for displaying and hidding the search suggestions list
-     */
-    toggleList = () => {
+   * toggleFocus Function is used to blur the images when the dropdown appears
+   */
+    toggleFocus = () => {
       this.setState({
-        displayList: !this.state.displayList
+        focus: !this.state.focus
       });
     };
 
@@ -45,7 +54,6 @@ class Search extends Component {
           <div>
             {this.calculatedDays()}
             {this.searchBar()}
-            {this.searchSuggestions()}
             {this.searchResults()}
           </div>
         );
@@ -64,24 +72,49 @@ class Search extends Component {
        */
       searchBar() {
         return (
-          <div className="search-fields-div" >
-            <Input
-              onFocus={() => this.toggleList()}
-              onBlur={() => this.toggleList()}
-              placeholder="Type in a Tv Show"
-              size="large"
-              className="search-input transparent-fields"
+          <div className='search-fields-div'>
+            {/* Input component is replaced with AutoComplete from Ant Design */}
+    
+            <AutoComplete
+              ref={input => {
+                this.nameInput = input;
+              }}
+              onBlur={() =>
+                this.setState({
+                  suggestions: [],
+                  focus: !this.state.focus
+                })
+              }
+              onFocus={this.toggleFocus}
+              dropdownStyle={{ background: 'transparent' }}
+              onChange={this.handleSearchText}
+              onSelect={(value, option) => this.getShowData(value, option)}
+              placeholder='Type in a Tv show'
+              style={{ width: 800 }}
               value={this.state.searchText}
-              onChange={e => this.handleSearchText(e)}
-            />
-            {/* Display the drop down and button only when
-                the user has selected a show */}
+              className='auto-complete'
+            >
+              {this.state.suggestions.map(item =>
+                this.state.suggestions.length > 0 &&
+                this.state.searchText.length > 0 ? (
+                  <Option key={item.id} className='suggest-item'>
+                    {item.title}
+                  </Option>
+                ) : (
+                  []
+                )
+              )}
+            </AutoComplete>
+    
+            {/* Display the drop down and button only when the user has selected a show */}
+    
             {!isEmpty(this.state.selectedShow) ? (
               this.state.selectedShow.numberOfSeasons > 0 ? (
                 <>
                   <Select
+                    className='number-of-seasons'
                     defaultValue={this.state.selectedShow.numberOfSeasons}
-                    size="large"
+                    size='large'
                     onChange={this.selectSeason}
                   >
                     {[...Array(this.state.selectedShow.numberOfSeasons).keys()].map(
@@ -91,29 +124,33 @@ class Search extends Component {
                         </Select.Option>
                       )
                     )}
-
                   </Select>
+    
                   <Button
-                    type="default"
-                    shape="circle"
-                    icon="right"
-                    size="large"
-                    style={{marginLeft: 10 + 'px'}} //Could not style in the css file
-                    onClick={() => this.calculateWatchTime()}
+                    type='default'
+                    shape='circle'
+                    icon='right'
+                    size='large'
+                    style={{ marginLeft: 10 + 'px', background: 'white' }}
+                    onClick={() => {
+                      this.calculateWatchTime();
+                    }}
                   />
                 </>
               ) : (
                 <Button
-                  type="default"
-                  shape="circle"
-                  icon="right"
-                  size="large"
-                  style={{marginLeft: 10 + 'px'}} //Could not style in the css file
-                  onClick={() => this.calculateWatchTime()}
+                  type='default'
+                  shape='circle'
+                  icon='right'
+                  size='large'
+                  style={{ marginLeft: '10px' }}
+                  onClick={() => {
+                    this.calculateWatchTime();
+                  }}
                 />
               )
             ) : (
-              ""
+              ''
             )}
           </div>
         );
@@ -123,62 +160,39 @@ class Search extends Component {
        * @description Asynchronously request data from TheMovieDB api
        * @author eoin.reilly
        */
-      handleSearchText = (e) => {
+      handleSearchText = e => {
         this.setState({
-          searchText: e.target.value
+          searchText: e
         });
-        let words = e.target.value;
-        let suggestions = [];
-        const apiPath = `https://api.themoviedb.org/3/search/tv?api_key=de810845bc016371c4822a8a9550270d&language=en-US&query=${e.target.value}`;
-
-        if(words.length > 1) {
+        let words = e;
+    
+        const apiPath = `https://api.themoviedb.org/3/search/tv?api_key=de810845bc016371c4822a8a9550270d&language=en-US&query=${e}`;
+    
+        if (words.length > 1) {
           Axios.get(apiPath)
             .then(response => {
-              response.data.results.map(
-                async result => {
-                  await suggestions.push({
+              let suggestions = [];
+    
+              response.data.results.map(result => {
+                // Limited the number of search results to first 5 results
+    
+                if (suggestions.length < 5) {
+                  suggestions.push({
                     title: result.name,
                     id: result.id
-                  })
+                  });
                 }
-              );
-              this.setState({ suggestions })
+              });
+              this.setState({ suggestions });
             })
             .catch(function(error) {
               //TODO: Error handling
             })
             .finally(function() {});
         } else {
-          this.setState({ suggestions: [], selectedShow: {} })
+          this.setState({ suggestions: [], selectedShow: {} });
         }
-      }
-
-      searchSuggestions = () => {
-        const displayList = this.state;
-        return (
-          <div className="search-suggestions-div">
-            {this.state.suggestions.length > 0 && displayList && (
-              <List
-                itemLayout='vertical'
-                dataSource={this.state.suggestions}
-                className='suggestion-list'
-                renderItem={(
-                  item 
-                ) => (
-                  <List.Item
-                    className='suggest-item'
-                    onClick={() => {
-                      this.getShowData(item.id, item.title);
-                    }}
-                  >
-                    {item.title}
-                  </List.Item>
-                )}
-              />
-            )}
-          </div>
-        );
-      }
+      };
 
       /**
        * @author eoin.reilly
@@ -187,9 +201,9 @@ class Search extends Component {
        * @param {*} name 
        * @returns {Object} which returns detail of tv show then getting id,name,image,number of episodes.
        */
-      getShowData = (id, name) => {
+      getShowData = (id, option) => {
         this.setState({
-          searchText: name,
+          searchText: option.props.children,
           suggestions: []
         });
         const apiPath = `https://api.themoviedb.org/3/tv/${id}?api_key=de810845bc016371c4822a8a9550270d&language=en-US`;
@@ -241,12 +255,14 @@ class Search extends Component {
        * the selected tv show 
        */
       calculateWatchTime() {
+        this.nameInput.focus();
+    
         let shows = this.state.showsData; // All the data on all shows currently calculated
         let totalShowsTime = this.state.totalTime; // Current total watch time
         let totalEpisodes = 0;
-
-        if(this.state.selectedSeason === null) {
-          this.state.selectedShow.seasons.map( 
+    
+        if (this.state.selectedSeason === null) {
+          this.state.selectedShow.seasons.map(
             result => (totalEpisodes += result.numberOfEpisodes)
           );
         } else {
@@ -281,20 +297,31 @@ class Search extends Component {
 
       searchResults() {
         return (
-          <div className="search-results-div">
+          <div className='search-results-div'>
             {this.state.showsData.length > 0 && (
               <List
-                itemLayout="horizontal"
-                className="search-results-list"
-                grid={{ xxl: 6, xl: 5, lg: 4, md: 3, sm: 2, xs: 1 }}
+                itemLayout='horizontal'
+                className='search-results-list'
+                grid={{ xxl: 6, xl: 5, lg: 4, md: 3, sm: 2, xs: 2 }}
                 dataSource={this.state.showsData}
                 renderItem={(item, i) => (
-                  <List.Item className="search-results-item">
+                  <List.Item
+                    className={
+                      this.state.suggestions.length > 0 && this.state.focus
+                        ? 'search-results-item active'
+                        : 'search-results-item'
+                    }
+                  >
                     <Result
+                      className='result'
                       src={item.poster}
-                      seasonsNumber={item.selectedSeason} //Fix incorrect season value
-                      title={item.name}
-                      removeItem={() => this.removeItem(i)}
+                      seasonsNumber={
+                        <span className='season-number'>{item.selectedSeason}</span>
+                      } // Fix incorrect season value
+                      title={<span className='item-name'>{item.name}</span>}
+                      removeItem={() => {
+                        this.removeItem(i);
+                      }}
                     />
                   </List.Item>
                 )}
@@ -309,6 +336,8 @@ class Search extends Component {
        * @desc Removes selected shows from local state and as well from local storage.
        */
       removeItem = (index) => {
+        this.nameInput.focus();
+
         /* val = the current element, i = current index (starts at 0)
          * If you remove val, i becomes the current element, so the filter will not work
          */

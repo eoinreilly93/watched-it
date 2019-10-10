@@ -1,8 +1,15 @@
 .result-div {
     position: relative;
-    height: 485px;
-    background: black
+    height: 400px;
+    background: black;
   }
+
+/* image height in div needs to change if you change the .result-div height */
+.result-div > div > img {
+  height: 400px;
+}
+
+
   
   .result-div:hover > .result-cancel {
     display: flex;
@@ -22,16 +29,26 @@
   .result-cancel:hover {
     color: red
   }
-  
+
+
   
   /* Display show name and season number chosen */
   .result-info {
+    padding: 10px 10px;
     position: absolute;
-    bottom: 10px;
-    right: 10px;
-    left: 10px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
     display: flex;
     justify-content: space-between;
     color: white;
     font-size: 18px;
+    background-image: -webkit-gradient(
+      linear,
+      50% 0,
+      50% 100%,
+      color-stop(0%, rgba(0, 0, 0, 0)),
+      color-stop(50%, rgba(0, 0, 0, 0.5)),
+      color-stop(100%, rgba(0, 0, 0, 0.7))
+    );
   }

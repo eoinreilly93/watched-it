@@ -5,45 +5,61 @@
     margin: 30px 0px 20px 0px;
 }
 
-.search-input {
-    width: 50% !important;
-    padding: 10px;
+.suggest-item {
+    margin: 0.5em 0;
+    color: white;
+    background: transparent;
+    font-size: 2em;
+    box-shadow: 10px 10px 20px 20px rgba(0, 0, 0, 0.24);
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.ant-select-selection {
+    background: transparent;
+}
+
+.number-of-seasons > .ant-select-selection {
+    background: white;
+}
+
+.auto-complete {
     font-weight: bold;
     font-size: 2em;
     color: white !important;
-    height: 50px;
 }
- 
-.transparent-fields {
-    background: transparent !important;
-    border: 0px !important;
+
+.ant-select-selection__placeholder {
+    overflow: visible;
+    padding-top: 7px;
+}
+
+.ant-select-auto-complete.ant-select,
+.ant-input {
     color: white;
 }
 
-.search-suggestions-div {
-    margin-top: 20px;
-    min-height: 100px;
-    max-height: 300px;
-    display: flex;
-    justify-content: center;
-    overflow: auto;
+.ant-input,
+.ant-input:hover {
+    border: none;
+    outline: none;
 }
 
-.suggestion-list {
-    width: 50%;
-    text-align: left;
-}
-
-.suggest-item {
-    border: 0px !important;
-    cursor: pointer;
-    color: white;
-    font-size: 24px;
-    width: 100%;
+.ant-input,
+.ant-select-search__field {
+    min-height: 50px;
 }
 
 /* Remove this  */
+
 .suggest-item:hover {
+    color: yellow;
+    background: rgba(0, 0, 0, 0.527);
+}
+
+.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled),
+.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled):hover,
+.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled):active {
+    background: rgba(0, 0, 0, 0.527);
     color: yellow;
 }
 
@@ -54,11 +70,22 @@
 
 .search-results-list {
     padding: 0px 40px;
+    margin-top: 70px;
 }
 
 .search-results-item {
     margin-bottom: 0px !important;
-    /* padding: 1px; Adds padding between results */
+    position: relative;
+}
+
+.season-number,
+.item-name {
+    position: relative;
+    z-index: 100000;
+}
+
+.active {
+    filter: blur(5px);
 }
 
 .bg {
@@ -82,7 +109,3 @@
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
 }
-
-  
-
-
