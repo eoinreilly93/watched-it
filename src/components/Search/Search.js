@@ -177,7 +177,7 @@ class Search extends Component {
               response.data.results.map(result => {
                 // Limited the number of search results to first 5 results
     
-                if (suggestions.length < 5) {
+                if (suggestions.length < 3) {
                   suggestions.push({
                     title: result.name,
                     id: result.id
